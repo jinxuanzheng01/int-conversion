@@ -1,7 +1,7 @@
 /** 字符集常量 */
 const __CHARS__ = '0123456789abcdefghigklmnopqrstuvwxyzABCDEFGHIGKLMNOPQRSTUVWXYZ+/';
 
-/** 递归计算位值 */
+/** 10进制转其他 */
 function dealEncode(number, unit) {
   let remainder = number % unit;
   let digit = (number - remainder) / unit;
@@ -11,15 +11,38 @@ function dealEncode(number, unit) {
   }
   return result;
 }
-/** 反向递归计算 */
+
+/** 其他转10进制 */
 function dealDecode(number, unit) {;
   let result =  __CHARS__.indexOf(number.substring(0,1)) * Math.pow(unit, number.length -1);
   let nextNumber = number.substring(1, number.length);
-  if(!!nextNumber) {
+  if(!!nextNumber.toString()) {
     result += dealDecode(nextNumber, unit);
   }
   return result;
 }
+
+/** 处理小数点 */
+function dealEncodePoint(number, unit, limit) {
+  let curremtNumber = number * unit;
+  let result = '';
+  if(curremtNumber != 0 && limit > 0) {
+    let curremtNumber2String = curremtNumber.toString();
+    let integer =  curremtNumber2String.split('.')[0];
+    result = __CHARS__[curremtNumber2String.split('.')[0]] + dealEncodePoint(curremtNumber - integer, unit, --limit);
+  }
+  return result;
+}
+// function dealDecodePoint(number, unit, limit) {
+//   let result =  __CHARS__.indexOf(number.substring(0,1)) * Math.pow(unit, number.length -1);
+//   let nextNumber = number.substring(1, number.length);
+//   console.log(result);
+//   if(!!nextNumber) {
+//     result += dealDecodePoint(nextNumber, unit);
+//   }
+//   return result;
+// }
+// console.log(`结果： ${dealDecodePoint('0.01', 2)}`);
 
 /** 返回格式 */
 function callbackReturn(code, msg) {
@@ -50,22 +73,14 @@ function unitValidation(type = 'encode',number, unit) {
       count--
     }
   }
-
-
   return callbackReturn(0, '');
-}
-
-/** 处理小数点 */
-function dealNumberPoint(number, unit, callback) {
-  let numberArr = number.split('.');
-  return `${callback(numberArr[0], unit)}.${callback(numberArr[1], unit)}`
 }
 
 /** 编码  */
 function encode(number, unit = 10) {
   // 小数点处理
   if(number.indexOf('.') !== -1) {
-    return dealNumberPoint(number, unit, encode);
+    return `${encode(number.split('.')[0], unit)}.${dealEncodePoint('0.' + number.split('.')[1], unit, 30)}`;
   }
   // 执行校验
   let validate = unitValidation('encode', number,unit);
@@ -79,7 +94,7 @@ function encode(number, unit = 10) {
 function decode(number, unit) {
   // 小数点处理
   if(number.indexOf('.') !== -1) {
-    return dealNumberPoint(number, unit, decode);
+    throw new Error('尚未开发浮点数转换');
   }
   // 执行校验
   let validate = unitValidation('decode', number, unit);

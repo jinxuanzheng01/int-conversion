@@ -5,16 +5,16 @@ const conversion = require('./conversion');
 let a = conversion.encode('210', 64);
 console.log(a);  // 值: 3i
 
-let b = conversion.decode('3i', 64);
+let b = conversion.decode('3i', 32);
 console.log(b);  // 值: 210
 
 
-/** 64位浮点数转换 */
-let c = conversion.encode('210.42', 64);
-console.log(c);  // 值: 3i.G
+/** 64位浮点数转换（默认浮点数最大长度30） */
+let c = conversion.encode('210.12', 64);
+console.log(c);  // 值: 3i.7HxhWUkuK
 
-let d = conversion.decode('3i.G', 64);
-console.log(d);  // 值: 210.42
+// let d = conversion.decode('3i.G', 64);
+// console.log(d);  // 值: 210.42
 
 
 /** 其他进制转换 */
