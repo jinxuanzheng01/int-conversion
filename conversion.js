@@ -22,7 +22,7 @@ function dealDecode(number, unit) {;
   return result;
 }
 
-/** 处理小数点 */
+/** 10进制浮点数转其他 */
 function dealEncodePoint(number, unit, limit) {
   let curremtNumber = number * unit;
   let result = '';
@@ -33,16 +33,16 @@ function dealEncodePoint(number, unit, limit) {
   }
   return result;
 }
-// function dealDecodePoint(number, unit, limit) {
-//   let result =  __CHARS__.indexOf(number.substring(0,1)) * Math.pow(unit, number.length -1);
-//   let nextNumber = number.substring(1, number.length);
-//   console.log(result);
-//   if(!!nextNumber) {
-//     result += dealDecodePoint(nextNumber, unit);
-//   }
-//   return result;
-// }
-// console.log(`结果： ${dealDecodePoint('0.01', 2)}`);
+
+/** 其他浮点数转10进制 */
+function dealDecodePoint(number, unit, count = 2) {
+  let result =  __CHARS__.indexOf(number.substring(0,1)) * (unit /  Math.pow(unit, count));
+  let nextNumber = number.substring(1, number.length);
+  if(!!nextNumber) {
+    result += dealDecodePoint(nextNumber, unit, ++count);
+  }
+  return result;
+}
 
 /** 返回格式 */
 function callbackReturn(code, msg) {
@@ -85,7 +85,6 @@ function encode(number, unit = 10) {
   // 执行校验
   let validate = unitValidation('encode', number,unit);
   if(validate.code !== 0) throw new Error(validate.msg);
-
   // 返回值
   return dealEncode(number, unit);
 }
@@ -94,7 +93,7 @@ function encode(number, unit = 10) {
 function decode(number, unit) {
   // 小数点处理
   if(number.indexOf('.') !== -1) {
-    throw new Error('尚未开发浮点数转换');
+    return `${decode(number.split('.')[0], unit) + dealDecodePoint(number.split('.')[1], unit)}`;
   }
   // 执行校验
   let validate = unitValidation('decode', number, unit);

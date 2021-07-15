@@ -13,8 +13,8 @@ console.log(b);  // 值: 210
 let c = conversion.encode('210.12', 64);
 console.log(c);  // 值: 3i.7HxhWUkuK
 
-// let d = conversion.decode('3i.G', 64);
-// console.log(d);  // 值: 210.42
+let d = conversion.decode('3i.7HxhWUkuK', 64);
+console.log(d);  // 值: 210.42
 
 
 /** 其他进制转换 */
